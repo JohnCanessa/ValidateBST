@@ -6,7 +6,7 @@ tree is a Binady Search Tree.
 
 If interested in my approach please take a look at the following post in my blog:
 
-<T.B.D.>
+https://www.johncanessa.com/2020/11/25/validate-binary-search-tree/
 
 Keep on reading end experiemnting; it is the best way to learn.
 
