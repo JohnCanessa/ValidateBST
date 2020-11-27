@@ -1,13 +1,13 @@
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Stack;
+
 
 /**
  * 
@@ -38,7 +38,6 @@ class TreeNode {
     public String toString() {
         return "" + this.val;
     }
-
 }
 
 
@@ -191,8 +190,8 @@ public class ValidateBST {
     /**
      * Given a binary tree, determine if it is a valid binary search tree (BST).
      * 
-     * Runtime: 1 ms, faster than 29.86% of Java online submissions.
-     * Memory Usage: 39 MB, less than 16.71% of Java online submissions.
+     * Runtime: 4 ms, faster than 5.72% of Java online submissions.
+     * Memory Usage: 41.4 MB, less than 5.01% of Java online submissions.
      */
     static boolean isValidBST0(TreeNode root) {
 
@@ -248,7 +247,7 @@ public class ValidateBST {
      * Given a binary tree, determine if it is a valid binary search tree (BST).
      * 
      * Runtime: 0 ms, faster than 100.00% of Java online submissions.
-     * Memory Usage: 38.4 MB, less than 78.20% of Java online submissions.
+     * Memory Usage: 39.3 MB, less than 5.83% of Java online submissions.
      */
     static boolean isValidBST(TreeNode root) {
 
@@ -260,6 +259,191 @@ public class ValidateBST {
         
         // **** return result ****
         return isValid[0];
+    }
+
+
+    /**
+     * Display node values in a binary tree in order traversal.
+     * Recursive approach.
+     * !!! NOT PART OF SOLUTION !!!
+     */
+    static void inOrder(TreeNode root) {
+        if (root != null) {
+            inOrder(root.left);
+            System.out.print(root.toString() + " ");
+            inOrder(root.right);
+        }
+    }
+
+
+    /**
+     * Display node values in a binary tree in order traversal.
+     * Iterative approach.
+     * !!! NOT PART OF SOLUTION !!!
+     */
+    static void inOrderIterative(TreeNode root) {
+
+        // **** sanity check(s) ****
+        if (root == null)
+            return;
+
+        // **** initialization ****
+        Stack<TreeNode> stack   = new Stack<>();
+        TreeNode node           = root;
+
+        // **** traverse the binary tree ****
+        while (node != null || stack.size() > 0) {
+
+            // **** save node and left children of node ****
+            while (node != null) {
+                stack.push(node);
+                node = node.left;
+            }
+
+            // **** pop next node ****
+            node = stack.pop();
+
+            // **** display node value ****
+            System.out.print(node.val + " ");
+
+            // **** visit right subtree ****
+            node = node.right;
+        }
+    }
+
+
+    /**
+     * Recursive call.
+     * Makes use of stack.
+     * 
+     * Runtime: 1 ms, faster than 29.59% of Java online submissions.
+     * Memory Usage: 38.7 MB, less than 46.91% of Java online submissions.
+     */
+    static boolean isValidBST1(TreeNode root) {
+
+        // **** sanity check(s) ****
+        if (root == null)
+            return true;
+
+        // **** initializion ****
+        Stack<TreeNode> stack   = new Stack<>();
+        TreeNode prev           = null;
+
+        // **** loop thorugh the binary tree ****
+        while (root != null || !stack.isEmpty()) {
+
+            // **** push all left nodes into the stack ****
+            while (root != null) {
+
+                // ???? ????
+                System.out.println("<<< push root: " + root.toString());
+
+                // **** ****
+                stack.push(root);
+
+                // **** ****
+                root = root.left;
+            }
+
+            // ???? ????
+            System.out.println("<<< stack bottom -> " + stack.toString());
+
+            // **** pop element ****
+            root = stack.pop();
+
+            // ???? ????
+            System.out.println("<<< pop root: " + root.toString());
+
+            // **** check if invalid root value ****
+            if (prev != null && root.val <= prev.val) {
+
+                // ???? ????
+                System.out.println("<<< root: " + root.toString() + " <= prev: " + prev.toString() + " !!!");
+
+                // **** invalid BST ****
+                return false;
+            }
+
+            // **** set previous node ****
+            prev = root;
+
+            // ???? ????
+            System.out.println("<<< prev: " + prev.toString());
+
+            // **** visit right child ****
+            root = root.right;     
+        }
+
+        // **** valid BST ****
+        return true;
+    }
+
+
+    /**
+     * Recursive call
+     * 
+     * Runtime: 267 ms, faster than 5.72% of Java online submissions.
+     * Memory Usage: 41.9 MB, less than 5.01% of Java online submissions.
+     */
+    static boolean traverse2(TreeNode node, List<Integer> vals) {
+
+        // **** ****
+        boolean retVal = true;
+
+        // **** visit left sub tree (if needed) ****
+        if (node.left != null) {
+            retVal = traverse2(node.left, vals);
+        }
+
+        // **** add node value to list ****
+        vals.add(node.val);
+
+        // **** ****
+        if (vals.size() > 1) {
+
+            // **** get indices ****
+            int firstIndx   = vals.indexOf(node.val);
+            int lastIndx    = vals.lastIndexOf(node.val);
+
+            // **** duplicate value  ****
+            if (firstIndx != lastIndx) {
+                return false;
+            }
+
+            // **** value out of order ****
+            if (vals.get(firstIndx - 1) >= node.val) {
+                return false;
+            }
+        }
+
+        // **** visit right sub tree (if needed) ****
+        if (retVal == true && node.right != null) {
+            retVal = traverse2(node.right, vals);
+        }
+
+        // **** ****
+        return retVal;
+    }
+
+
+    /**
+     * Given a binary tree, determine if it is a valid binary search tree (BST).
+     * 
+     */
+    static boolean isValidBST2(TreeNode root) {
+
+        // **** sanity check(s) ****
+        if (root == null)
+            return true;
+
+        if (root.left == null && root.right == null)
+            return true;
+
+        // **** initialization ****
+        List<Integer> vals  = new ArrayList<Integer>();
+
+        // **** in order tree traversal ****
+        return traverse2(root, vals);
     }
 
 
@@ -282,10 +466,26 @@ public class ValidateBST {
         // **** populate the binary tree ****
         TreeNode root = populateBT(arr);
 
-        // **** determine if valid BST ****
+        // ???? inOrder binary tree traversal (recursive approach) ????
+        System.out.print("main <<<          inOrder: ");
+        inOrder(root);
+        System.out.println();
+
+        // ???? inOrder binary tree traversal (iterative approach) ????
+        System.out.print("main <<< inOrderIterative: ");
+        inOrderIterative(root);
+        System.out.println();
+
+        // **** determine if a valid BST ****
+        System.out.println("main <<< isValidBST1: " + isValidBST1(root));
+
+        // **** determine if a valid BST ****
+        System.out.println("main <<< isValidBST2: " + isValidBST2(root));
+
+        // **** determine if a valid BST ****
         System.out.println("main <<< isValidBST0: " + isValidBST0(root));
 
-        // **** determine if valid BST ****
+        // **** determine if a valid BST ****
         System.out.println("main <<<  isValidBST: " + isValidBST(root));
     }
 }
